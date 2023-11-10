@@ -1,0 +1,5 @@
+blue==0.9.1
+flet==0.11.0
+isort==5.12.0
+moviepy==1.0.3
+pytube==15.0.0
