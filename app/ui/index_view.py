@@ -13,14 +13,14 @@ class IndexView(BaseView):
         self.directory_field.label = 'Directory'
         self.directory_field.expand = True
 
-        self.directory_picker_button = ft.IconButton()
+        self.directory_picker_button = ft.FloatingActionButton()
         self.directory_picker_button.icon = ft.icons.FOLDER
 
         self.video_url_field = ft.TextField()
         self.video_url_field.label = 'Youtube Video URL'
         self.video_url_field.expand = True
 
-        self.video_search_button = ft.IconButton()
+        self.video_search_button = ft.FloatingActionButton()
         self.video_search_button.icon = ft.icons.SEARCH
 
         self.search_progress_ring = ft.ProgressRing()

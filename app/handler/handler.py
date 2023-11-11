@@ -42,6 +42,7 @@ class Handler:
             self.application.close_banner()
             self.application.hide_download_container()
             self.application.set_download_progress_value(0.0)
+            self.application.set_download_text_value('')
             self.application.start_search_progress_ring()
 
             youtube = YouTube(
@@ -52,6 +53,8 @@ class Handler:
 
         except Exception as error:
             self.application.display_danger_banner(str(error))
+            self.application.set_download_progress_value(0.0)
+            self.application.set_download_text_value('')
             print(traceback.print_exc())
 
         else:
@@ -73,19 +76,20 @@ class Handler:
             self.application.close_banner()
             self.application.disable_download_container()
             self.application.set_download_progress_value(0.0)
-            self.application.set_download_text_value('Downloading...')
-
             stream.download(output_path=output_path, filename=filename)
-            self.application.set_download_text_value('')
 
             if video_preview.converter_checkbox.value:
                 file = Path.joinpath(Path(output_path), Path(filename))
                 self.convert_to_mp3(str(file))
+                self.application.set_download_text_value('')
+                self.application.set_download_progress_value(0.0)
 
             self.application.display_success_banner('Done.')
 
         except Exception as error:
             self.application.display_danger_banner(str(error))
+            self.application.set_download_text_value('')
+            self.application.set_download_progress_value(0.0)
             print(traceback.print_exc())
 
         finally:
@@ -98,6 +102,7 @@ class Handler:
         bytes_downloaded = total_size - bytes_remaining
         pct_completed = bytes_downloaded / total_size * 100
         self.application.set_download_progress_value(pct_completed * 0.01)
+        self.application.set_download_text_value(f'Downloading {pct_completed:.0f}%')
 
     def convert_to_mp3(self, file: str) -> None:
         # https://github.com/NeuralNine/youtube-downloader-converter/blob/master/file_converter.py
@@ -107,6 +112,3 @@ class Handler:
         clip = VideoFileClip(file)
         clip.audio.write_audiofile(file[:-4] + '.mp3')
         clip.close()
-
-        self.application.set_download_text_value('')
-        self.application.set_download_progress_value(0.0)

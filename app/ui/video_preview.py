@@ -26,7 +26,6 @@ class VideoPreview(ft.UserControl):
         )
 
         self.container = ft.Container(content)
-        self.container.border = ft.border.all(3, '#A66F5B')
         self.container.padding = ft.padding.all(15)
 
     def build(self) -> ft.Container:
