@@ -24,9 +24,7 @@ class Handler:
 
     def bind_videos_previews(self) -> None:
         for preview in self.application.get_videos_previews():
-            preview.download_button.on_click = (
-                lambda _event, video_preview=preview: self.handle_download_video(video_preview)
-            )
+            preview.download_button.on_click = (lambda _event, video_preview=preview: self.handle_download_video(video_preview))
 
     def handle_toggle_theme(self, _event: ft.ControlEvent) -> None:
         self.application.toggle_theme()
@@ -41,14 +39,12 @@ class Handler:
         try:
             self.application.close_banner()
             self.application.hide_download_container()
+            self.application.disable_search_container()
             self.application.set_download_progress_value(0.0)
             self.application.set_download_text_value('')
             self.application.start_search_progress_ring()
 
-            youtube = YouTube(
-                self.application.get_video_url(),
-                on_progress_callback=self.download_progress_callback,
-            )
+            youtube = YouTube(self.application.get_video_url())
             streams = youtube.streams.filter(progressive=True)[::-1]
 
         except Exception as error:
@@ -65,6 +61,7 @@ class Handler:
             self.bind_videos_previews()
 
         finally:
+            self.application.enable_search_container()
             self.application.stop_search_progress_ring()
 
     def handle_download_video(self, video_preview: VideoPreview) -> None:
@@ -75,14 +72,15 @@ class Handler:
 
             self.application.close_banner()
             self.application.disable_download_container()
-            self.application.set_download_progress_value(0.0)
+            self.application.disable_search_container()
+            self.application.set_download_progress_value(None)
+            self.application.set_download_text_value('Downloading...')
             stream.download(output_path=output_path, filename=filename)
 
             if video_preview.converter_checkbox.value:
                 file = Path.joinpath(Path(output_path), Path(filename))
+                self.application.set_download_text_value('Converting...')
                 self.convert_to_mp3(str(file))
-                self.application.set_download_text_value('')
-                self.application.set_download_progress_value(0.0)
 
             self.application.display_success_banner('Done.')
 
@@ -93,7 +91,10 @@ class Handler:
             print(traceback.print_exc())
 
         finally:
+            self.application.set_download_text_value('')
+            self.application.set_download_progress_value(0.0)
             self.application.enable_download_container()
+            self.application.enable_search_container()
 
     def download_progress_callback(self, stream, _chunk, bytes_remaining) -> None:
         # https://stackoverflow.com/questions/71010685/pytube-us-of-on-progress-callback
@@ -106,9 +107,6 @@ class Handler:
 
     def convert_to_mp3(self, file: str) -> None:
         # https://github.com/NeuralNine/youtube-downloader-converter/blob/master/file_converter.py
-        self.application.set_download_text_value('Converting...')
-        self.application.set_download_progress_value(None)
-
         clip = VideoFileClip(file)
         clip.audio.write_audiofile(file[:-4] + '.mp3')
         clip.close()

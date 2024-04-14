@@ -6,7 +6,7 @@ from app.ui import Application
 
 def main(page: ft.Page) -> None:
     application = Application(page)
-    _handler = Handler(application)
+    Handler(application)
 
 
 if __name__ == '__main__':

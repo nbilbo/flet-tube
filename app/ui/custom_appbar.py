@@ -11,7 +11,6 @@ class CustomAppBar(ft.AppBar):
 
         self.title = ft.Text()
         self.title.value = 'Flet Tube'
-        self.title.color = ft.colors.WHITE
 
         self.toggle_theme_button = ft.IconButton()
         self.toggle_theme_button.icon = ft.icons.LIGHT_MODE

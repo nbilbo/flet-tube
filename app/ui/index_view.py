@@ -22,11 +22,22 @@ class IndexView(BaseView):
 
         self.video_search_button = ft.FloatingActionButton()
         self.video_search_button.icon = ft.icons.SEARCH
+        
+        search_content = ft.Column()
+        search_content.controls.append(ft.Row([self.directory_field, self.directory_picker_button]))
+        search_content.controls.append(ft.Row([self.video_url_field, self.video_search_button]))
+        self.search_container = ft.Container(search_content)
 
         self.search_progress_ring = ft.ProgressRing()
         self.search_progress_ring.color = ft.colors.BLUE
         self.search_progress_ring.bgcolor = ft.colors.TRANSPARENT
         self.search_progress_ring.value = 0.0
+
+        self.download_progress_bar = ft.ProgressBar()
+        self.download_progress_bar.color = ft.colors.GREEN
+        self.download_progress_bar.bgcolor = ft.colors.TRANSPARENT
+        self.download_progress_bar.expand = True
+        self.download_progress_bar.value = 0.0
 
         self.video_title = ft.Text()
         self.video_title.size = 20
@@ -40,37 +51,25 @@ class IndexView(BaseView):
 
         self.list_view = ft.ListView()
         self.list_view.spacing = 5
-
-        self.download_progress_bar = ft.ProgressBar()
-        self.download_progress_bar.color = ft.colors.GREEN
-        self.download_progress_bar.bgcolor = ft.colors.TRANSPARENT
-        self.download_progress_bar.expand = True
-        self.download_progress_bar.value = 0.0
+        self.list_view.expand = False
 
         self.download_text = ft.Text()
         self.download_text.style = ft.TextThemeStyle.LABEL_LARGE
 
         download_content = ft.Column()
         download_content.controls.append(ft.Row([self.video_thumbnail, self.video_title]))
-        download_content.controls.append(ft.Divider(height=5, color=ft.colors.TRANSPARENT))
-        download_content.controls.append(
-            ft.Container(ft.Column([self.list_view], scroll=ft.ScrollMode.AUTO), expand=True)
-        )
-        download_content.controls.append(ft.Row([self.download_text, self.download_progress_bar]))
+        download_content.controls.append(self.list_view)
 
         self.download_container = ft.Container(download_content)
         self.download_container.border = ft.border.all(5, ft.colors.TRANSPARENT)
         self.download_container.padding = ft.padding.all(5)
-        self.download_container.expand = True
 
         content = ft.Column()
-        content.controls.append(ft.Divider(height=15, color=ft.colors.TRANSPARENT))
-        content.controls.append(ft.Row([self.directory_field, self.directory_picker_button]))
-        content.controls.append(ft.Row([self.video_url_field, self.video_search_button]))
-        content.controls.append(
-            ft.Row([self.search_progress_ring], alignment=ft.MainAxisAlignment.CENTER)
-        )
+        content.controls.append(self.search_container)
+        content.controls.append(ft.Row([self.search_progress_ring], alignment=ft.MainAxisAlignment.CENTER))
+        content.controls.append(ft.Row([self.download_text, self.download_progress_bar]))
         content.controls.append(self.download_container)
+        content.scroll = ft.ScrollMode.AUTO
         content.width = 800
 
         container = ft.Container(content)

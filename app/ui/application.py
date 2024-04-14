@@ -55,7 +55,9 @@ class Application:
                 self.active_dark_theme()
 
     def go_to_index_view(self) -> None:
-        self.page.go(self.index_view.route)
+        self.page.views.append(self.index_view)
+        self.page.update()
+        #self.page.go(self.index_view.route)
 
     def open_directory_picker(self, on_result: Callable) -> None:
         picker = ft.FilePicker(on_result=on_result)
@@ -83,8 +85,16 @@ class Application:
         self.index_view.download_container.disabled = True
         self.page.update()
 
+    def disable_search_container(self) -> None:
+        self.index_view.search_container.disabled = True
+        self.page.update()
+
     def enable_download_container(self) -> None:
         self.index_view.download_container.disabled = False
+        self.page.update()
+
+    def enable_search_container(self) -> None:
+        self.index_view.search_container.disabled = False
         self.page.update()
 
     def display_snack_message(self, message: str) -> None:
