@@ -5,6 +5,7 @@ import flet as ft
 from moviepy.editor import VideoFileClip
 from pytube import YouTube
 
+from app.config import settings
 from app.ui import Application, BaseView, IndexView, VideoPreview
 
 
@@ -67,7 +68,7 @@ class Handler:
     def handle_download_video(self, video_preview: VideoPreview) -> None:
         try:
             stream = video_preview.stream
-            filename = stream.title.replace(' ', '-') + '.mp4'
+            filename = settings.OUTPUT_VIDEO
             output_path = self.application.get_video_directory()
 
             self.application.close_banner()

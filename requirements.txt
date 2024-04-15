@@ -8,6 +8,7 @@ charset-normalizer==3.3.2
 click==8.1.7
 cookiecutter==2.6.0
 decorator==4.4.2
+dynaconf==3.2.5
 exceptiongroup==1.2.0
 fastapi==0.110.1
 flet==0.22.0
