@@ -1,7 +1,6 @@
 from typing import Callable, Dict, List, Union
 
 import flet as ft
-from pytube import StreamQuery
 
 from app import constants
 from app.ui import BaseView, DangerBanner, IndexView, SuccessBanner, VideoPreview
@@ -13,7 +12,7 @@ class Application:
         self.page = page
         self.page.title = 'Flet Tube'
         self.page.on_route_change = self.route_change
-        self.page.window_width = self.page.window_height = 650
+        self.page.window_width = self.page.window_height = 550
 
         # views.
         self.index_view = IndexView()
@@ -22,7 +21,7 @@ class Application:
         # initial state.
         self.go_to_index_view()
         self.index_view.video_url_field.focus()
-        self.set_video_directory(constants.HOME_DIR)
+        self.set_directory(constants.HOME_DIR)
         self.hide_download_container()
         self.display_snack_message('Welcome.')
         self.active_dark_theme()
@@ -117,13 +116,16 @@ class Application:
     def get_video_url(self) -> str:
         return self.index_view.video_url_field.value
 
-    def get_video_directory(self) -> str:
+    def get_directory(self) -> str:
         return self.index_view.directory_field.value
 
-    def get_videos_previews(self) -> List[VideoPreview]:
-        return self.index_view.list_view.controls
+    def get_resolution(self) -> str:
+        return self.index_view.resolution_dropdown.value
 
-    def set_video_directory(self, directory: str) -> None:
+    def get_audio(self) -> str:
+        return self.index_view.audio_dropdown.value
+
+    def set_directory(self, directory: str) -> None:
         self.index_view.directory_field.value = directory
         self.page.update()
 
@@ -135,18 +137,20 @@ class Application:
         self.index_view.video_thumbnail.src = thumbnail
         self.page.update()
 
-    def set_streams(self, streams: StreamQuery) -> None:
-        self.index_view.list_view.controls.clear()
-        for stream in streams:
-            preview = VideoPreview()
-            preview.stream = stream
-            preview.resolution.value = stream.resolution
-            self.index_view.list_view.controls.append(preview)
-
     def set_download_progress_value(self, value: Union[float, None]) -> None:
         self.index_view.download_progress_bar.value = value
         self.page.update()
 
     def set_download_text_value(self, value: str) -> None:
         self.index_view.download_text.value = value
+        self.page.update()
+
+    def set_resolutions(self, resolutions: List[str]) -> None:
+        self.index_view.resolution_dropdown.options = [ft.dropdown.Option(option) for option in resolutions]
+        self.index_view.resolution_dropdown.value = resolutions[0]
+        self.page.update()
+
+    def set_audios(self, audios: List[str]) -> None:
+        self.index_view.audio_dropdown.options = [ft.dropdown.Option(option) for option in audios]
+        self.index_view.audio_dropdown.value = audios[0]
         self.page.update()

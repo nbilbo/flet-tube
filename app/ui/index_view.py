@@ -49,16 +49,39 @@ class IndexView(BaseView):
         self.video_thumbnail.fit = ft.ImageFit.SCALE_DOWN
         self.video_thumbnail.src = None
 
-        self.list_view = ft.ListView()
-        self.list_view.spacing = 5
-        self.list_view.expand = False
+        self.resolution_dropdown = ft.Dropdown()
+        self.resolution_dropdown.label = 'Video Resolution'
+        self.resolution_dropdown.expand = True
+
+        self.audio_dropdown = ft.Dropdown()
+        self.audio_dropdown.label = 'Audio Kbps'
+        self.audio_dropdown.expand = True
+
+        self.video_download_button = ft.TextButton()
+        self.video_download_button.text = 'Download Video'
+        self.video_download_button.icon = ft.icons.DOWNLOAD
+        self.video_download_button.icon_color = ft.colors.GREEN
+
+        self.audio_download_button = ft.TextButton()
+        self.audio_download_button.text = 'Download Audio'
+        self.audio_download_button.icon = ft.icons.DOWNLOAD
+        self.audio_download_button.icon_color = ft.colors.GREEN
+
+        video_download_row = ft.Row()
+        video_download_row.controls.append(self.resolution_dropdown)
+        video_download_row.controls.append(self.video_download_button)
+
+        audio_download_row = ft.Row()
+        audio_download_row.controls.append(self.audio_dropdown)
+        audio_download_row.controls.append(self.audio_download_button)
 
         self.download_text = ft.Text()
         self.download_text.style = ft.TextThemeStyle.LABEL_LARGE
 
         download_content = ft.Column()
         download_content.controls.append(ft.Row([self.video_thumbnail, self.video_title]))
-        download_content.controls.append(self.list_view)
+        download_content.controls.append(video_download_row)
+        download_content.controls.append(audio_download_row)
 
         self.download_container = ft.Container(download_content)
         self.download_container.border = ft.border.all(5, ft.colors.TRANSPARENT)
@@ -73,5 +96,5 @@ class IndexView(BaseView):
         content.width = 800
 
         container = ft.Container(content)
-        container.expand = True
         self.controls.append(container)
+        container.expand = True

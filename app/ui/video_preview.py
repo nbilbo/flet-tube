@@ -1,13 +1,13 @@
 from typing import Optional
 
 import flet as ft
-from pytube import Stream
+from pytubefix import Stream
 
 
 class VideoPreview(ft.UserControl):
     def __init__(self) -> None:
         super().__init__()
-        self.stream: Optional[Stream] = None
+        # self.stream: Optional[Stream] = None
 
         self.resolution = ft.Text()
         self.resolution.style = ft.TextThemeStyle.LABEL_LARGE
