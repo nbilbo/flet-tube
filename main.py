@@ -2,6 +2,7 @@ import traceback
 from pathlib import Path
 from typing import Callable
 from typing import List
+from typing import Optional
 from typing import Union
 
 import flet as ft
@@ -10,29 +11,28 @@ from pytubefix import YouTube
 
 HOME_DIR = Path.home()
 
-
 class CustomAppBar(ft.AppBar):
     def __init__(self) -> None:
         super().__init__()
         self.toolbar_height = 75
 
         self.leading = ft.Icon()
-        self.leading.name = ft.icons.DOWNLOAD
+        self.leading.name = ft.Icons.DOWNLOAD
 
         self.title = ft.Text()
         self.title.value = 'Flet Tube'
 
         self.toggle_theme_button = ft.IconButton()
-        self.toggle_theme_button.icon = ft.icons.LIGHT_MODE
+        self.toggle_theme_button.icon = ft.Icons.LIGHT_MODE
         self.actions.append(self.toggle_theme_button)
 
 
 class SuccessBanner(ft.Banner):
     def __init__(self) -> None:
-        super().__init__()
+        super().__init__(content=[], actions=[])
         self.close_button = ft.TextButton()
         self.close_button.text = 'Close'
-        self.close_button.icon = ft.icons.CLOSE
+        self.close_button.icon = ft.Icons.CLOSE
         self.close_button.on_click = self.handle_close
         self.actions.append(self.close_button)
 
@@ -42,10 +42,10 @@ class SuccessBanner(ft.Banner):
         self.text.expand = True
 
         self.icon = ft.Icon()
-        self.icon.name = ft.icons.CHECK
+        self.icon.name = ft.Icons.CHECK
 
         self.content = ft.Row([self.icon, self.text])
-        self.bgcolor = ft.colors.GREEN
+        self.bgcolor = ft.Colors.GREEN
 
     def handle_close(self, _event: ft.ControlEvent) -> None:
         self.open = False
@@ -55,8 +55,8 @@ class SuccessBanner(ft.Banner):
 class DangerBanner(SuccessBanner):
     def __init__(self) -> None:
         super().__init__()
-        self.icon.name = ft.icons.DANGEROUS
-        self.bgcolor = ft.colors.RED
+        self.icon.name = ft.Icons.DANGEROUS
+        self.bgcolor = ft.Colors.RED
 
 
 class BaseView(ft.View):
@@ -80,14 +80,14 @@ class IndexView(BaseView):
         self.directory_field.expand = True
 
         self.directory_picker_button = ft.FloatingActionButton()
-        self.directory_picker_button.icon = ft.icons.FOLDER
+        self.directory_picker_button.icon = ft.Icons.FOLDER
 
         self.video_url_field = ft.TextField()
         self.video_url_field.label = 'Youtube Video URL'
         self.video_url_field.expand = True
 
         self.video_search_button = ft.FloatingActionButton()
-        self.video_search_button.icon = ft.icons.SEARCH
+        self.video_search_button.icon = ft.Icons.SEARCH
         
         search_content = ft.Column()
         search_content.controls.append(ft.Row([self.directory_field, self.directory_picker_button]))
@@ -95,13 +95,13 @@ class IndexView(BaseView):
         self.search_container = ft.Container(search_content)
 
         self.search_progress_ring = ft.ProgressRing()
-        self.search_progress_ring.color = ft.colors.BLUE
-        self.search_progress_ring.bgcolor = ft.colors.TRANSPARENT
+        self.search_progress_ring.color = ft.Colors.BLUE
+        self.search_progress_ring.bgcolor = ft.Colors.TRANSPARENT
         self.search_progress_ring.value = 0.0
 
         self.download_progress_bar = ft.ProgressBar()
-        self.download_progress_bar.color = ft.colors.GREEN
-        self.download_progress_bar.bgcolor = ft.colors.TRANSPARENT
+        self.download_progress_bar.color = ft.Colors.GREEN
+        self.download_progress_bar.bgcolor = ft.Colors.TRANSPARENT
         self.download_progress_bar.expand = True
         self.download_progress_bar.value = 0.0
 
@@ -125,13 +125,13 @@ class IndexView(BaseView):
 
         self.video_download_button = ft.TextButton()
         self.video_download_button.text = 'Download Video'
-        self.video_download_button.icon = ft.icons.DOWNLOAD
-        self.video_download_button.icon_color = ft.colors.GREEN
+        self.video_download_button.icon = ft.Icons.DOWNLOAD
+        self.video_download_button.icon_color = ft.Colors.GREEN
 
         self.audio_download_button = ft.TextButton()
         self.audio_download_button.text = 'Download Audio'
-        self.audio_download_button.icon = ft.icons.DOWNLOAD
-        self.audio_download_button.icon_color = ft.colors.GREEN
+        self.audio_download_button.icon = ft.Icons.DOWNLOAD
+        self.audio_download_button.icon_color = ft.Colors.GREEN
 
         video_download_row = ft.Row()
         video_download_row.controls.append(self.resolution_dropdown)
@@ -150,7 +150,7 @@ class IndexView(BaseView):
         download_content.controls.append(audio_download_row)
 
         self.download_container = ft.Container(download_content)
-        self.download_container.border = ft.border.all(5, ft.colors.TRANSPARENT)
+        self.download_container.border = ft.border.all(5, ft.Colors.TRANSPARENT)
         self.download_container.padding = ft.padding.all(5)
 
         content = ft.Column()
@@ -170,9 +170,11 @@ class Application:
     def __init__(self, page: ft.Page) -> None:
         # page settings.
         self.page = page
+        self.banner: Optional[ft.Banner] = None
+
         self.page.title = 'Flet Tube'
         self.page.on_route_change = self.route_change
-        self.page.window_width = self.page.window_height = 550
+        self.page.window.width = self.page.window.height = 550
 
         # views.
         self.index_view = IndexView()
@@ -194,14 +196,14 @@ class Application:
 
     def active_dark_theme(self) -> None:
         for view in self.views.values():
-            view.appbar.toggle_theme_button.icon = ft.icons.LIGHT_MODE
+            view.appbar.toggle_theme_button.icon = ft.Icons.LIGHT_MODE
 
         self.page.theme_mode = ft.ThemeMode.DARK
         self.page.update()
 
     def active_light_theme(self) -> None:
         for view in self.views.values():
-            view.appbar.toggle_theme_button.icon = ft.icons.DARK_MODE
+            view.appbar.toggle_theme_button.icon = ft.Icons.DARK_MODE
 
         self.page.theme_mode = ft.ThemeMode.LIGHT
         self.page.update()
@@ -258,20 +260,21 @@ class Application:
 
     def display_snack_message(self, message: str) -> None:
         snack = ft.SnackBar(ft.Text(message))
-        self.page.show_snack_bar(snack)
+        self.page.open(snack)
 
     def display_success_banner(self, message: str) -> None:
-        banner = SuccessBanner()
-        banner.text.value = message
-        self.page.show_banner(banner)
+        self.banner = SuccessBanner()
+        self.banner.text.value = message
+        self.page.open(self.banner)
 
     def display_danger_banner(self, message: str) -> None:
-        banner = DangerBanner()
-        banner.text.value = message
-        self.page.show_banner(banner)
+        self.banner = DangerBanner()
+        self.banner.text.value = message
+        self.page.open(self.banner)
 
     def close_banner(self) -> None:
-        self.page.close_banner()
+        if self.banner is not None:
+            self.page.close(self.banner)
 
     def get_video_url(self) -> str:
         return self.index_view.video_url_field.value
@@ -383,11 +386,13 @@ class Handler:
 
             video_url = self.application.get_video_url()
             resolution = self.application.get_resolution()
-            video_output = Path(self.application.get_directory()).joinpath('video.mp4')
 
             youtube_video = YouTube(video_url, on_progress_callback=self.download_video_progress_callback)
             video_stream = youtube_video.streams.filter(adaptive=True, mime_type='video/mp4', res=resolution).first()
-            video_stream.download(filename=video_output)
+
+            output_path = Path(self.application.get_directory())
+            filename = youtube_video.title + '.mp4'
+            video_stream.download(output_path=output_path, filename=filename)
 
         except Exception as error:
             self.application.display_danger_banner(str(error))
@@ -415,11 +420,13 @@ class Handler:
 
             video_url = self.application.get_video_url()
             audio = self.application.get_audio()
-            audio_output = Path(self.application.get_directory()).joinpath('audio.mp3')
             
             youtube_audio = YouTube(video_url, on_progress_callback=self.download_audio_progress_callback)
             audio_stream = youtube_audio.streams.filter(adaptive=True, mime_type='audio/mp4', abr=audio).first()
-            audio_stream.download(filename=audio_output)
+
+            output_path = Path(self.application.get_directory())
+            filename = youtube_audio.title + '.mp3'
+            audio_stream.download(output_path=output_path, filename=filename)
 
         except Exception as error:
             self.application.display_danger_banner(str(error))
