@@ -4,6 +4,10 @@ Download youtube videos.
 
 <img src="assets/images/sample.png" width="500"/>
 
+## Requirements.
+- python3
+- nodejs
+
 ## Installing.
 
 ```bash
