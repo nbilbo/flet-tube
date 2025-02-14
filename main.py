@@ -353,7 +353,7 @@ class Handler:
             self.application.set_download_text_value('')
             self.application.start_search_progress_ring()
 
-            youtube = YouTube(self.application.get_video_url())
+            youtube = YouTube(url=self.application.get_video_url(), client='WEB')
             streams = youtube.streams.filter(adaptive=True)
 
             resolutions = {stream.resolution for stream in youtube.streams.filter(adaptive=True,  mime_type='video/mp4')}
@@ -387,7 +387,7 @@ class Handler:
             video_url = self.application.get_video_url()
             resolution = self.application.get_resolution()
 
-            youtube_video = YouTube(video_url, on_progress_callback=self.download_video_progress_callback)
+            youtube_video = YouTube(url=video_url, client='WEB', on_progress_callback=self.download_video_progress_callback)
             video_stream = youtube_video.streams.filter(adaptive=True, mime_type='video/mp4', res=resolution).first()
 
             output_path = Path(self.application.get_directory())
@@ -421,7 +421,7 @@ class Handler:
             video_url = self.application.get_video_url()
             audio = self.application.get_audio()
             
-            youtube_audio = YouTube(video_url, on_progress_callback=self.download_audio_progress_callback)
+            youtube_audio = YouTube(url=video_url, client='WEB', on_progress_callback=self.download_audio_progress_callback)
             audio_stream = youtube_audio.streams.filter(adaptive=True, mime_type='audio/mp4', abr=audio).first()
 
             output_path = Path(self.application.get_directory())
