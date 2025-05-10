@@ -6,5 +6,5 @@ readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "flet[all]==0.25.1",
-    "pytubefix>=8.7.0",
+    "pytubefix>=8.13.1",
 ]
