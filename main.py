@@ -356,8 +356,10 @@ class Handler:
             youtube = YouTube(url=self.application.get_video_url(), client='WEB')
             streams = youtube.streams.filter(adaptive=True)
 
-            resolutions = {stream.resolution for stream in youtube.streams.filter(adaptive=True,  mime_type='video/mp4')}
-            audios = {stream.abr for stream in youtube.streams.filter(adaptive=True, mime_type='audio/mp4')}
+            resolutions = {stream.resolution for stream in youtube.streams.filter(adaptive=True,  mime_type='video/mp4') if stream.resolution is not None}
+            audios = {stream.abr for stream in youtube.streams.filter(adaptive=True, mime_type='audio/mp4') if stream.abr is not None}
+            # print(f'resolutions: {resolutions}')
+            # print(f'audios: {audios}')
 
             self.application.set_resolutions(list(resolutions))
             self.application.set_audios(list(audios))
